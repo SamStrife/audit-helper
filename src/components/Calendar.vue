@@ -17,26 +17,18 @@ export default {
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, luxon2Plugin],
         initialView: 'dayGridMonth',
-        events: [
-          {
-            id: '34445',
-            title: 'Poundstretcher Ltd',
-            start: '2019-12-01T00:00:00.000+00:00',
-            end: '2024-06-11T00:00:00.000+01:00',
-          },
-        ],
-        // this.hireArray,
+        events: this.hireArray,
       },
     };
   },
   methods: {
     pushToHireArray() {
       this.hires
-        .filter((hire) => hire.Registration == 'YL68AEG')
+        .filter((hire) => hire.CustomerName == 'M.T.S Logistics Limited')
         .forEach((hire) =>
           this.hireArray.push({
             id: hire.UniqueID,
-            title: hire.CustomerName,
+            title: hire.Registration,
             start: this.$luxonDateTime.fromFormat(
               hire.HireStartDate,
               'dd/MM/yyyy'
@@ -48,13 +40,20 @@ export default {
           })
         );
     },
+    refresh() {
+      calendarApi.refetchEvents();
+    },
   },
   created() {
     this.pushToHireArray();
     console.log(`Hire Array: ${JSON.stringify(this.hireArray)}`);
   },
+  mounted() {
+    const calendarApi = this.$refs.fullCalendar.getApi();
+  },
 };
 </script>
 <template>
+  <button @click="refresh">Refresh</button>
   <FullCalendar ref="fullCalendar" :options="calendarOptions" />
 </template>
